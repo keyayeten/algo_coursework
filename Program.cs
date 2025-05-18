@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Program.cs
+
+using System;
 using System.Linq;
 
 namespace algo_coursework
@@ -76,11 +78,14 @@ namespace algo_coursework
             int heuristicResult = BinPackingSolver.HeuristicBinPacking(data.Weights, data.Capacity);
             Console.WriteLine($"Минимальное число контейнеров (эвристика): {heuristicResult}");
 
-            Console.WriteLine("\n--- Полный перебор ---");
+            Console.WriteLine("\n--- Полный рекурсивный перебор ---");
             int bruteForceRecursiveResult = BinPackingSolver.BruteForceBinPacking(data.Weights, data.Capacity);
             Console.WriteLine($"Минимальное число контейнеров (рекрсивный перебор): {bruteForceRecursiveResult}");
+
+            Console.WriteLine("\n--- Полный итеративный перебор ---");
             int bruteForceIterativeResult = BinPackingSolver.BruteForceBinPackingIterative(data.Weights, data.Capacity);
             Console.WriteLine($"Минимальное число контейнеров (итеративный перебор): {bruteForceIterativeResult}");
+
         }
 
         private static UserData InputNewData()

@@ -1,4 +1,6 @@
-﻿using System;
+﻿// BinPackingSolver.cs
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,16 +13,17 @@ namespace algo_coursework
             Array.Sort(weights);
             Array.Reverse(weights);
 
-            List<int> bins = new List<int>();
+            List<List<int>> bins = new List<List<int>>();
 
             foreach (var weight in weights)
             {
                 bool placed = false;
                 for (int i = 0; i < bins.Count; i++)
                 {
-                    if (bins[i] + weight <= capacity)
+                    int currentSum = bins[i].Sum();
+                    if (currentSum + weight <= capacity)
                     {
-                        bins[i] += weight;
+                        bins[i].Add(weight);
                         placed = true;
                         break;
                     }
@@ -28,8 +31,14 @@ namespace algo_coursework
 
                 if (!placed)
                 {
-                    bins.Add(weight);
+                    bins.Add(new List<int> { weight });
                 }
+            }
+
+            // Вывод загруженности каждого контейнера
+            for (int i = 0; i < bins.Count; i++)
+            {
+                Console.WriteLine($"Контейнер {i + 1}: [{string.Join(", ", bins[i])}]  -> Всего: {bins[i].Sum()}");
             }
 
             return bins.Count;
@@ -39,12 +48,20 @@ namespace algo_coursework
         {
             int n = weights.Length;
             int minBins = n;
+            List<List<int>> bestBins = null;
 
             void TryBins(List<List<int>> bins, int index)
             {
+                if (bins.Count >= minBins)
+                    return;
+
                 if (index == n)
                 {
-                    minBins = Math.Min(minBins, bins.Count);
+                    if (bins.Count < minBins)
+                    {
+                        minBins = bins.Count;
+                        bestBins = bins.Select(bin => new List<int>(bin)).ToList();
+                    }
                     return;
                 }
 
@@ -66,6 +83,15 @@ namespace algo_coursework
             }
 
             TryBins(new List<List<int>>(), 0);
+
+            if (bestBins != null)
+            {
+                for (int i = 0; i < bestBins.Count; i++)
+                {
+                    Console.WriteLine($"Контейнер {i + 1}: [{string.Join(", ", bestBins[i])}]  -> Всего: {bestBins[i].Sum()}");
+                }
+            }
+
             return minBins;
         }
 
@@ -73,6 +99,7 @@ namespace algo_coursework
         {
             int n = weights.Length;
             int minBins = n;
+            List<List<int>> bestBins = null;
 
             var initialState = new State
             {
@@ -87,9 +114,16 @@ namespace algo_coursework
             {
                 var state = stack.Pop();
 
+                if (state.Bins.Count >= minBins)
+                    continue;
+
                 if (state.Index == n)
                 {
-                    minBins = Math.Min(minBins, state.Bins.Count);
+                    if (state.Bins.Count < minBins)
+                    {
+                        minBins = state.Bins.Count;
+                        bestBins = CloneBins(state.Bins);
+                    }
                     continue;
                 }
 
@@ -118,6 +152,14 @@ namespace algo_coursework
                     Index = state.Index + 1,
                     Bins = newBinList
                 });
+            }
+
+            if (bestBins != null)
+            {
+                for (int i = 0; i < bestBins.Count; i++)
+                {
+                    Console.WriteLine($"Контейнер {i + 1}: [{string.Join(", ", bestBins[i])}]  -> Всего: {bestBins[i].Sum()}");
+                }
             }
 
             return minBins;

@@ -1,4 +1,6 @@
-﻿using System;
+﻿// UserData.cs
+
+using System;
 
 namespace algo_coursework
 {
